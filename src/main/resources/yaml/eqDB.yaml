@@ -1,0 +1,434 @@
+swagger: '2.0'
+info:
+  title: EQ
+  description: RESTful API for Earthquake Events in an ORACLE Database
+  contact:
+    name: Glen Currier
+    url: 'http://srv1:8080/eq/api/'
+    email: glen.currier@mgz-muenchen.de
+  version: 1.0.0
+host: srv1.fritz.box
+schemes:
+  - https
+basePath: /eq
+produces:
+  - application/json
+parameters:
+  id:
+    name: id
+    in: path
+    description: The id of the entity.
+    required: true
+    type: string
+  fields:
+    name: fields
+    in: query
+    description: A list of field names to return.
+    required: false
+    type: array
+    items:
+      type: string
+    collectionFormat: multi
+  offset:
+    name: offset
+    in: query
+    description: >-
+      The zero-based index of the first element to return. Defaults to 0 if not
+      supplied.
+    required: false
+    type: integer
+  limit:
+    name: limit
+    in: query
+    description: The maximum number of elements to return.
+    required: false
+    type: integer
+  sort:
+    name: sort
+    in: query
+    description: >-
+      The string representation of a json array holding objects with the keys
+      and the sort direction. [@see
+      /definitions/SortModel](#!/definitions/SortModel)
+    required: false
+    type: string
+  filter:
+    name: filter
+    in: query
+    description: >-
+      The string representation of a json object holding filter fields, values
+      and expressions. Must be one of [@see
+      /definitions/NumberFilterModel](#!/definitions/NumberFilterModel), [@see
+      /definitions/TextFilterModel](#!/definitions/TextFilterModel), [@see
+      /definitions/DateFilterModel](#!/definitions/DateFilterModel), [@see
+      /definitions/SetFilterModel](#!/definitions/SetFilterModel)
+    required: false
+    type: string
+  q:
+    name: q
+    in: query
+    description: A query expression to find matching results for.
+    required: false
+    type: string
+paths:
+  /event:
+    get:
+      summary: retrieve earthquake event records
+      description: Retrieve all rows from the EQ_EVENTS table.
+      tags:
+        - EqEvent
+        - GET
+      parameters:
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/offset'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/filter'
+        - $ref: '#/parameters/q'
+      responses:
+        '200':
+          description: Returns an array of objects containing earthquake events.
+          schema:
+            type: object
+            properties:
+              gDats:
+                type: array
+                items:
+                  $ref: '#/definitions/EqEvent'
+              _metadata:
+                $ref: '#/definitions/Metadata'
+        '401':
+          description: Unauthorized access attempted.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access Forbidden.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal (Back-End) server error.
+          schema:
+            $ref: '#/definitions/Error'
+  '/event/{id}':
+    get:
+      summary: Retrieve a specific earthquake event record.
+      description: >-
+        Retrieve an earthquake record based on the usgs-prescribed event id (not
+        the table row eq_event_id).
+      tags:
+        - EqEvent
+        - GET
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/fields'
+      responses:
+        '200':
+          description: The requested earthquake record for the given id.
+          schema:
+            type: object
+            properties:
+              gDat:
+                type: array
+                items:
+                  $ref: '#/definitions/EqEvent'
+              _metadata:
+                $ref: '#/definitions/Metadata'
+        '401':
+          description: Unauthorized access attempted.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: Access Forbidden.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal (Back-End) server error.
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  EqEvent:
+    type: object
+    required:
+      - usgsID
+    properties:
+      eqEvID:
+        type: number
+        description: 'EQ_EVENT_ID: Primary Key'
+      evDataID:
+        type: string
+        description: 'EVENT_DATA_ID: Foreign Key to EVENT_DATA table'
+      usgsID:
+        type: string
+        description: >-
+          ID: A unique identifier for the event. This is the current preferred
+          id for the event, and may change over time
+      mag:
+        type: number
+        description: >-
+          MAGNITUDE: The magnitude for the event. Learn more about magnitudes.
+          [http://earthquake.usgs.gov/learn/glossary/?term=magnitude](http://earthquake.usgs.gov/learn/glossary/?term=magnitude)
+      place:
+        type: string
+        description: >-
+          PLACE: Textual description of named geographic region near to the
+          event. This may be a city name, or a Flinn-Engdahl Region
+          (http://earthquake.usgs.gov/learn/topics/flinn_engdahl.php) name
+      evTime:
+        type: string
+        description: >-
+          EVENT_TIME: Time when the event occurred. Times are reported in
+          milliseconds since the epoch (1970-01-01T00:00:00.000Z), and do not
+          include leap seconds. In certain output formats, the date is formatted
+          for readability
+      updtd:
+        type: string
+        description: >-
+          UPDATED: Time when the event was most recently updated. Times are
+          reported in milliseconds since the epoch. In certain output formats,
+          the date is formatted for readability
+      evtz:
+        type: number
+        description: 'EVENT_TZ: Timezone offset from UTC in minutes at the event epicenter'
+      felt:
+        type: number
+        description: >-
+          FELT: The total number of felt reports submitted to the DYFI?
+          [http://earthquake.usgs.gov/research/dyfi/](http://earthquake.usgs.gov/research/dyfi/)
+          system
+      cdi:
+        type: number
+        description: >-
+          CDI: The maximum reported intensity
+          [http://earthquake.usgs.gov/learn/glossary/?term=intensity](http://earthquake.usgs.gov/learn/glossary/?term=intensity)
+          for the event. Computed by DYFI
+          [http://earthquake.usgs.gov/research/dyfi/](http://earthquake.usgs.gov/research/dyfi/).
+          While typically reported as a roman numeral, for the purposes of this
+          API, intensity is expected as the decimal equivalent of the roman
+          numeral. Learn more about magnitude vs. intensity
+          (http://earthquake.usgs.gov/learn/topics/mag_vs_int.php)
+      mmi:
+        type: number
+        description: >-
+          MMI: The maximum estimated instrumental intensity
+          [http://earthquake.usgs.gov/learn/glossary/?term=intensity](http://earthquake.usgs.gov/learn/glossary/?term=intensity)
+          for the event. Computed by ShakeMap
+          [http://earthquake.usgs.gov/research/shakemap/](http://earthquake.usgs.gov/research/shakemap/).
+          While typically reported as a roman numeral, for the purposes of this
+          API, intensity is expected as the decimal equivalent of the roman
+          numeral. Learn more about magnitude vs. intensity
+          (http://earthquake.usgs.gov/learn/topics/mag_vs_int.php)
+      alert:
+        type: string
+        description: >-
+          ALERT: The alert level from the PAGER earthquake impact scale
+          [http://earthquake.usgs.gov/research/pager/](http://earthquake.usgs.gov/research/pager/)
+      tsnmi:
+        type: number
+        description: >-
+          TSUNAMI: A flag value (0: non-oceanic event, 1: event occurrence in
+          oceanic region)
+      sig:
+        type: number
+        description: >-
+          SIG: A number describing how significant the event is. Larger numbers
+          indicate a more significant event. This value is determined on a
+          number of factors, including: magnitude, maximum MMI, felt reports,
+          and estimated impact
+      net:
+        type: string
+        description: >-
+          NET: The ID of a data contributor. Identifies the network considered
+          to be the preferred source of information for this event
+      code:
+        type: string
+        description: 'CODE: identifying code assigned by event source'
+      ids:
+        type: string
+        description: >-
+          IDS: A comma-separated list of event ids that are associated to an
+          event
+      srcs:
+        type: string
+        description: 'SOURCES: comma separated list of network contributors'
+      evTyps:
+        type: string
+        description: 'TYPES: csv list of products associated with the event'
+      nst:
+        type: number
+        description: >-
+          NST: The total number of seismic stations which reported P- and
+          S-arrival times for this earthquake
+      dmin:
+        type: number
+        description: >-
+          DMIN: horizontal distance from epicenter to nearest sensor station (in
+          degrees) ~111.2 km per degree (the smaller this number, the more
+          accurate the depth value)
+      rms:
+        type: number
+        description: >-
+          RMS: The root-mean-square (RMS) travel time residual, in sec, using
+          all weights. This parameter provides a measure of the fit of the
+          observed arrival times to the predicted arrival times for this
+          location. Smaller numbers reflect a better fit of the data. The value
+          is dependent on the accuracy of the velocity model used to compute the
+          earthquake location, the quality weights assigned to the arrival time
+          data, and the procedure used to locate the earthquake
+      gap:
+        type: number
+        description: >-
+          GAP: The largest azimuthal gap between azimuthally adjacent stations
+          (in degrees). In general, the smaller this number, the more reliable
+          is the calculated horizontal position of the earthquake
+      mgTyp:
+        type: string
+        description: >-
+          MAGTYPE: The method or algorithm used to calculate the preferred
+          magnitude for the event. Learn more about magnitude types
+          [http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php#magnitudes](http://earthquake.usgs.gov/earthquakes/map/doc_aboutdata.php#magnitudes)
+      evTyp:
+        type: string
+        description: 'EVENT_TYPE (TYPE): type of seismic event (EARTHQUAKE, QUARRY)'
+      long:
+        type: string
+        description: 'LONGITUDE: decimal degrees (negative values are western hemisphere)'
+      lat:
+        type: string
+        description: 'LATITUDE: decimal degrees (negative values are southern hemisphere)'
+      dpth:
+        type: number
+        description: 'DEPTH: depth in kilometers'
+      evUrl:
+        type: string
+        description: 'EVENT_URL (URL): Link to USGS Event Page for event'
+      evDet:
+        type: string
+        description: >-
+          EVENT_DETAIL (DETAIL): Link to GeoJSON detail feed
+          [http://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson_detail.php](http://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson_detail.php).
+          NOTE: When searching and using geojson with callback, no callback is
+          included in the detail url
+      evStat:
+        type: string
+        description: >-
+          EVENT_STATUS (STATUS): indicates whether event has been reviewed by a
+          human (AUTOMATIC,PUBLISHED,REVIEWED)
+  Metadata:
+    type: object
+    description: Metadata used for describing return values of more than one entity.
+    properties:
+      totalCount:
+        type: integer
+        description: The total count of entities returned.
+      limit:
+        type: integer
+        description: The amount of elements contained in the message.
+      offset:
+        type: integer
+        description: The offset from which the elements are listed.
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        minimum: 100
+        maximum: 600
+        description: The error code.
+      msg:
+        type: string
+        description: A short message describing the error.
+      dtls:
+        type: string
+        description: Detailed error text.
+  SortModel:
+    type: object
+    properties:
+      colId:
+        type: string
+        description: The name of the field to apply sorting on.
+      sort:
+        type: string
+        description: 'The sort direction. One of ''asc'', ''desc''.'
+        enum:
+          - asc
+          - desc
+  NumberFilterModel:
+    type: object
+    properties:
+      type:
+        type: string
+        description: >-
+          The filter type. The type of number filter to apply. One of ['equals',
+          'notEquals', 'lessThanOrEqual', 'greaterThan', 'greaterThanOrEqual',
+          'inRange'].
+        enum:
+          - equals
+          - notEquals
+          - lessThanOrEqual
+          - greaterThan
+          - greaterThanOrEqual
+          - inRange
+      filter:
+        type: string
+        description: >-
+          The actual filter number to apply, or the start of the range if the
+          filter type is inRange.
+      filterTo:
+        type: string
+        description: >-
+          The end range of the filter if the filter type is inRange, otherwise
+          has no effect.
+  TextFilterModel:
+    type: object
+    properties:
+      type:
+        type: string
+        description: >-
+          The filter type. The type of text filter to apply. One of ['equals',
+          'notEqual', 'contains', 'notContains', 'startsWith', 'endsWith'].
+        enum:
+          - equals
+          - notEqual
+          - contains
+          - notContains
+          - startsWith
+          - endsWith
+      filter:
+        type: string
+        description: >-
+          The actual filter number to apply, or the start of the range if the
+          filter type is inRange.
+  DateFilterModel:
+    type: object
+    properties:
+      type:
+        type: string
+        description: >-
+          The filter type. The type of date filter to apply. One of ['equals',
+          'notEquals', 'lessThanOrEqual', 'greaterThan', 'greaterThanOrEqual',
+          'inRange']
+        enum:
+          - equals
+          - notEquals
+          - lessThanOrEqual
+          - greaterThan
+          - greaterThanOrEqual
+          - inRange
+      date:
+        type: string
+        description: >-
+          The actual filter date to apply, or the start of the range if the
+          filter type is inRange.
+      dateTo:
+        type: string
+        description: >-
+          The end range of the filter if the filter type is inRange, otherwise
+          has no effect.
+  SetFilterModel:
+    type: array
+    items:
+      type: string
+externalDocs:
+  description: USGS Earthquake database API
+  url: 'https://earthquake.usgs.gov/fdsnws/event/1/'

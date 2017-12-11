@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.eq</groupId>
+    <artifactId>EqStatVis</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <productName>Earthquake Statistics Visualization</productName>
+        <appVersion>1.0</appVersion>
+        <copyrightYear>2017</copyrightYear>
+        <copyrightCompany>N/A</copyrightCompany>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <build.timestamp>${maven.build.timestamp}</build.timestamp>
+
+        <spring.version>4.3.3.RELEASE</spring.version>
+        <spring-data-jpa.version>1.10.2.RELEASE</spring-data-jpa.version>
+        <spring-security.version>4.1.1.RELEASE</spring-security.version>
+        <spring-websockets.version>4.3.1.RELEASE</spring-websockets.version>
+        <aspectj.version>1.8.9</aspectj.version>
+        <hibernate.version>5.2.10.Final</hibernate.version>
+        <hibernate.validator.version>5.2.4.Final</hibernate.validator.version>
+        <sqlserverjdbc.version>4.0</sqlserverjdbc.version>
+        <castor.version>1.4.1</castor.version>
+        <jackson.version>2.8.9</jackson.version>
+        <junit.version>4.12</junit.version>
+        <springfox-version>2.5.0</springfox-version>
+
+        <java.version>1.8</java.version>
+        <jaxrs.version>2.0</jaxrs.version>
+        <springboot.resteasy.version>2.3.3-RELEASE</springboot.resteasy.version>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.8.RELEASE</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <!-- Exclude the Tomcat dependency -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--Use Undertow instead-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+
+        <!-- [org.jboss.resteasy]::resteasy-spring -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${jaxrs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.springboot</groupId>
+            <artifactId>resteasy-spring-boot-starter</artifactId>
+            <version>${springboot.resteasy.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Spring Boot unit testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>1.5.8.RELEASE</version>
+        </dependency>
+
+        <!-- [org.json]::json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
+
+        <!-- used for javadoc build-->
+        <dependency>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+        <dependency>
+            <!--
+              Core utilities used by other modules.
+              Define this if you use Spring Utility APIs
+              (org.springframework.core.*/org.springframework.util.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-expression -->
+        <dependency>
+            <!--
+              Expression Language (depends on spring-core)
+              Define this if you use Spring Expression APIs
+              (org.springframework.expression.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-beans -->
+        <dependency>
+            <!--
+              Bean Factory and JavaBeans utilities
+              (depends on spring-core)
+              Define this if you use Spring Bean APIs
+              (org.springframework.beans.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-aop -->
+        <dependency>
+            <!--
+              Aspect Oriented Programming (AOP) Framework
+              (depends on spring-core, spring-beans)
+              Define this if you use Spring AOP APIs
+              (org.springframework.aop.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-context -->
+        <dependency>
+            <!--
+              Application Context
+              (depends on spring-core, spring-expression, spring-aop, spring-beans)
+              This is the central artifact for Spring's Dependency Injection Container and is generally always defined
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-context-support -->
+        <!--dependency>
+            <
+              Various Application Context utilities, including EhCache, JavaMail, Quartz, and Freemarker integration.
+              Define this if you need any of these integrations
+            >
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency-->
+        <!-- [org.springframework]::spring-tx -->
+        <dependency>
+            <!--
+              Transaction Management Abstraction
+              (depends on spring-core, spring-beans, spring-aop, spring-context)
+              Define this if you use Spring Transactions or DAO Exception Hierarchy
+              (org.springframework.transaction.*/org.springframework.dao.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-jdbc -->
+        <dependency>
+            <!--
+              JDBC Data Access Library
+              (depends on spring-core, spring-beans, spring-context, spring-tx)
+              Define this if you use Spring's JdbcTemplate API
+              (org.springframework.jdbc.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-orm -->
+        <dependency>
+            <!--
+              Object-to-Relation-Mapping (ORM) integration with Hibernate, JPA and iBatis.
+              (depends on spring-core, spring-beans, spring-context, spring-tx)
+              Define this if you need ORM (org.springframework.orm.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-oxm -->
+        <dependency>
+            <!--
+              Object-to-XML Mapping (OXM) abstraction and integration with JAXB, JiBX, Castor, XStream, and XML Beans.
+              (depends on spring-core, spring-beans, spring-context)
+              Define this if you need OXM (org.springframework.oxm.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-web -->
+        <dependency>
+            <!--
+              Web application development utilities applicable to both Servlet and Portlet Environments
+              (depends on spring-core, spring-beans, spring-context)
+              Define this if you use Spring MVC, or wish to use Struts, JSF, or another web framework with Spring
+              (org.springframework.web.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-webmvc -->
+        <dependency>
+            <!--
+              Spring MVC for Servlet Environments
+              (depends on spring-core, spring-beans, spring-context, spring-web)
+              Define this if you use Spring MVC with a Servlet Container such as Apache Tomcat
+              (org.springframework.web.servlet.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-webmvc-portlet -->
+        <dependency>
+            <!--
+              Spring MVC for Portlet Environments
+              (depends on spring-core, spring-beans, spring-context, spring-web)
+              Define this if you use Spring MVC with a Portlet Container
+              (org.springframework.web.portlet.*)
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc-portlet</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-test -->
+        <dependency>
+            <!--
+              Support for testing Spring applications with tools such as JUnit and TestNG
+              This artifact is generally always defined with a 'test' scope for the integration testing framework and unit testing stubs
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- [org.springframework]::spring-websocket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>${spring-websockets.version}</version>
+        </dependency>
+        <!-- [org.springframework]::spring-messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>${spring-websockets.version}</version>
+        </dependency>
+        <!-- [org.springframework.security]::spring-security-web -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <!-- [org.springframework.security]::spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <!-- [org.springframework.security]::spring-security-ldap -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <!-- [org.springframework.data]::spring-data-jpa -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data-jpa.version}</version>
+        </dependency>
+
+        <!-- ######################################################### Java EE ######################################################### -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+        </dependency>
+        <!-- [javax.servlet]::servlet-api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <!-- [javax.servlet.jsp]::jsp-api -->
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
+            <!--scope>provided</scope-->
+        </dependency>
+        <!-- [javax.servlet]::jstl -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!-- ######################################################## Hibernate ######################################################## -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- [org.hibernate]::hibernate-entitymanager -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+        </dependency>
+
+        <!-- #################################################### ORACLE JDBC Driver #################################################### -->
+        <!-- need prior registration at:
+            https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides
+            https://www.oracle.com/webapps/maven/register/register.html
+            http://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9010
+         -->
+        <!-- Installing ojdbc8 from local resource (should have latest oracle lient version installed)
+        mvn install:install-file -Dfile=ojdbc8.jar -DgroupId=com.oracle.jdbc -DartifactId=local-ojdbc8 -Dversion=12.2.0 -Dpackaging=jar -Dgenerate=true-->
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>local-ojdbc8</artifactId>
+            <version>12.2.0</version>
+        </dependency>
+
+        <!-- ######################################################### RESTEasy ######################################################## -->
+        <!-- [org.jboss.resteasy]::resteasy-spring -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-spring</artifactId>
+            <version>3.1.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <!--<artifactId>resteasy-jsapi</artifactId>-->
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>3.1.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ######################################################### Testing ######################################################### -->
+        <!-- [junit]::junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ######################################################### Logging ######################################################### -->
+        <!-- [org.slf4j]::slf4j-log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
+        <!-- ########################################################## Others ######################################################### -->
+        <!-- [com.fasterxml.jackson.core]::jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- [com.fasterxml.jackson.core]::jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- [com.fasterxml.jackson.datatype]::jackson-datatype-hibernate5 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- [com.fasterxml.jackson.module]::jackson-modules-java8 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- [org.json]::json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
+        <!-- [io.springfox]::springfox-swagger2 | SpringFox dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-version}</version>
+        </dependency>
+        <!-- optional, good for handle I/O task -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.196</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>maven.oracle.com</id>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://maven.oracle.com</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven.oracle.com</id>
+            <url>https://maven.oracle.com</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <finalName>${productName}-${appVersion}.${build.timestamp}/${project.artifactId}.war</finalName>
+        <sourceDirectory>src/main</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <webXml>web/WEB-INF/web.xml</webXml>
+                    <warSourceExcludes>**/js/**,**/pages/ngl.html</warSourceExcludes>
+                    <webResources>
+                        <resource>
+                            <directory>web/META-INF</directory>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                            <targetPath>META-INF</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>web/WEB-INF/pages</directory>
+                            <includes>
+                                <include>**/auth.jsp</include>
+                                <include>**/ngl.jsp</include>
+                            </includes>
+                            <targetPath>WEB-INF/pages</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                        <resource>
+                            <directory>web/WEB-INF/_js-optimization/css</directory>
+                            <includes>
+                                <include>ngl.css</include>
+                            </includes>
+                            <targetPath>WEB-INF/css</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>web/WEB-INF/images</directory>
+                            <excludes>
+                                <exclude>**/_bgRes/**</exclude>
+                                <exclude>**/_controls/**</exclude>
+                                <exclude>**/_defaultRes/**</exclude>
+                                <exclude>**/ngl_default-flag_sprite01.txt</exclude>
+                                <exclude>**/ngl_default-sprite01.txt</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                            <targetPath>WEB-INF/images</targetPath>
+                        </resource>
+                        <!--<resource>-->
+                        <!--<directory>web/WEB-INF/js</directory>-->
+                        <!--<excludes>-->
+                        <!--&lt;!&ndash;<exclude>**/**</exclude>&ndash;&gt;-->
+                        <!--<exclude>**/module/**</exclude>-->
+                        <!--</excludes>-->
+                        <!--<includes>-->
+                        <!--<include>**/**</include>-->
+                        <!--</includes>-->
+                        <!--<targetPath>WEB-INF/js${build.timestamp}</targetPath>-->
+                        <!--</resource>-->
+                        <resource>
+                            <directory>web/WEB-INF/_js-optimization/build</directory>
+                            <includes>
+                                <include>**/lib/requirejs/require-2.3.2.min.js</include>
+                                <include>**/main.js</include>
+                                <include>**/ngl.js</include>
+                            </includes>
+                            <targetPath>WEB-INF/js${build.timestamp}</targetPath>
+                            <filtering>false</filtering>
+                        </resource>
+                        <resource>
+                            <directory>web/WEB-INF</directory>
+                            <includes>
+                                <include>**/application-context.xml</include>
+                                <include>**/application-datasource.xml</include>
+                                <include>**/application-security.xml</include>
+                                <include>**/dispatcher-servlet.xml</include>
+                                <include>**/jboss-web.xml</include>
+                            </includes>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution><!-- Run our css minification script -->
+                        <id>css minification</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/web/WEB-INF/_js-optimization/minifyCSS.bat</executable>
+                        </configuration>
+                    </execution>
+                    <execution><!-- Run our js minification script -->
+                        <id>js minification</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/web/WEB-INF/_js-optimization/minifyJS.bat</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>${basedir}/web/WEB-INF/_js-optimization/build/ngl.js</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>\$\{productName\}</token>
+                            <value>${productName}</value>
+                        </replacement>
+                        <replacement>
+                            <token>\$\{appVersion\}</token>
+                            <value>${appVersion}</value>
+                        </replacement>
+                        <replacement>
+                            <token>\$\{build\.timestamp\}</token>
+                            <value>${build.timestamp}</value>
+                        </replacement>
+                        <replacement>
+                            <token>\$\{copyrightYear\}</token>
+                            <value>${copyrightYear}</value>
+                        </replacement>
+                        <replacement>
+                            <token>\$\{copyrightCompany\}</token>
+                            <value>${copyrightCompany}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- usage deploy: mvn wildfly:deploy -->
+                <!-- usage undeploy: mvn wildfly:undeploy -->
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.1.0.Final</version>
+                <configuration>
+                    <hostname>pc1</hostname>
+                    <port>9990</port>
+                    <username>admin</username>
+                    <password>admin</password>
+                </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
