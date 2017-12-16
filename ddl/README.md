@@ -1,6 +1,8 @@
 # Oracle EQ Database DDL
 
-Oracle 12c DDL
+Oracle 12c EQ DB ddl [here](oracle/eq-db).
+
+Logger (a pl/sql logging package) [here](https://github.com/OraOpenSource/Logger).
 
 # MySQL/Maria EQ Database DDL
 
