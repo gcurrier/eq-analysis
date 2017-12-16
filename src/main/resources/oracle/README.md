@@ -1,2 +1,0 @@
-# oracle code
-This folder contains (or will contain) all relevant pl/sql upon which the eq database operates and may possibly include current data dump of all tables, script for db rebuilding and backup/recovery operations. (forthcoming)
